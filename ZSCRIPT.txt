@@ -193,6 +193,7 @@ class HDSuperStimpacker : HDStimpacker
 						A_TakeInjector(invoker.InventoryType);
 						mon.A_StartSound(mon.painsound, CHAN_VOICE);
 						mon.Stunned = max(0, mon.stunned >> 1);
+						mon.GiveBody(-30);
 						if (!CheckInventory(invoker.InventoryType, 1))
 						{
 							return ResolveState("DeselectHold");
@@ -288,7 +289,7 @@ class InjectSuperStimDummy : InjectStimDummy
 {
 	Default
 	{
-		Accuracy 120;
+		Accuracy 70;
 	}
 
 	States
@@ -306,7 +307,7 @@ class InjectSuperStimDummy : InjectStimDummy
 				tg.aggravateddamage += random(1, 2);
 				if (tg.zerk > 0)
 				{
-					tg.aggravateddamage + random(1, 2);
+					tg.aggravateddamage + random(2, 4);
 				}
 			}
 			TNT1 A 1
@@ -319,11 +320,20 @@ class InjectSuperStimDummy : InjectStimDummy
 
 				if (Accuracy % 2 == 0)
 				{
+					// [Ace] Standard dosage.
 					if (Accuracy > default.Accuracy - 40)
 					{
 						tg.stimcount++;
+						tg.fatigue += 3;
 					}
-					tg.GiveBody(1);
+					tg.GiveBody(randompick(1, 1, 2));
+
+					// [Ace] Overdose if you try to overregenerate.
+					if (tg.Health >= 95)
+					{
+						tg.stimcount++;
+						tg.fatigue += 2;
+					}
 				}
 				Accuracy--;
 			}
@@ -341,11 +351,12 @@ class SpentSuperStim : SpentZerk
 	States
 	{
 		Spawn:
-			SSYR G 1 A_SetRoll(roll + 60, SPF_INTERPOLATE);
+			SSYR G 1 A_SetRoll(Roll + 60, SPF_INTERPOLATE);
 			Loop;
 		Death:
 			SSYR G -1
 			{
+				Roll = 0;
 				if (!random(0, 1))
 				{
 					Scale.x *= -1;
