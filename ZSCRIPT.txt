@@ -329,7 +329,7 @@ class InjectSuperStimDummy : InjectStimDummy
 					tg.GiveBody(randompick(1, 1, 2));
 
 					// [Ace] Overdose if you try to overregenerate.
-					if (tg.Health >= 95)
+					if (tg.Health >= 80)
 					{
 						tg.stimcount++;
 						tg.fatigue += 2;
