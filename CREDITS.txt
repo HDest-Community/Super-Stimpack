@@ -1,0 +1,8 @@
+Code:
+- Accensus
+
+Sprites:
+- Super stim: id Software
+- Injector: ???
+
+All edits by Accensus.
