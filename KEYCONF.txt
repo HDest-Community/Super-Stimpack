@@ -1,0 +1,2 @@
+AddKeySection "Super Stimpack" HDSuperStimKeys
+AddMenuKey "Use Super Stimpack" "use PortableSuperStimpack"

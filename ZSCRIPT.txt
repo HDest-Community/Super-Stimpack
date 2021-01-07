@@ -23,6 +23,71 @@ class SuperStimHandler : StaticEventHandler
 
 class PortableSuperStimpack : PortableStimpack
 {
+	override void DoEffect()
+	{
+		Cooldown--;
+		if (TimesFumbled > 0 && Cooldown <= 0)
+		{
+			TimesFumbled--;
+			Cooldown = 9;
+		}
+
+		Super.DoEffect();
+	}
+
+	override bool Use(bool pickup)
+	{
+		let plr = HDPlayerPawn(owner);
+		if (!plr || plr.incapacitated <= 0)
+		{
+			return Super.Use(pickup);
+		}
+
+		plr.A_StartSound("weapons/pocket", 20);
+		if (++TimesFumbled >= 10)
+		{
+			// [Ace] Actual stim.
+			plr.A_SetBlend("7a 3a 18", 0.1, 4);
+			plr.A_SetPitch(plr.pitch + 2, SPF_INTERPOLATE);
+			if (HDPlayerPawn(plr))
+			{
+				plr.A_StartSound(HDPlayerPawn(plr).medsound, CHAN_VOICE);
+			}
+			else
+			{
+				plr.A_StartSound("*usemeds",CHAN_VOICE);
+			}
+			plr.A_StartSound("misc/bulletflesh", CHAN_WEAPON);
+			Actor StimEffect = Spawn("InjectSuperStimDummy", plr.pos, ALLOW_REPLACE);
+			StimEffect.target = plr;
+
+			// [Ace] Spent stim.
+			Actor s = Spawn("SpentSuperStim", plr.pos + (0, 0, plr.height - 8), ALLOW_REPLACE);
+			s.angle = plr.angle;
+			s.vel = plr.vel;
+			s.A_ChangeVelocity(3, 1, 2, CVF_RELATIVE);
+			s.A_StartSound("weapons/grenopen", 8);
+
+			Amount--;
+			if (Amount <= 0)
+			{
+				Destroy();
+				return false;
+			}
+			else if (Mags.Size() > 0)
+			{
+				Mags.Pop();
+			}
+
+			TimesFumbled = 0;
+		}
+
+		return false;
+	}
+
+	private int Cooldown;
+	private int TimesFumbled;
+
 	Default
 	{
 		Inventory.PickupMessage "Picked up a super stimpack.";
