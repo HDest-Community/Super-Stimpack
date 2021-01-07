@@ -324,15 +324,15 @@ class InjectSuperStimDummy : InjectStimDummy
 					if (Accuracy > default.Accuracy - 40)
 					{
 						tg.stimcount++;
-						tg.fatigue += 3;
+						tg.fatigue += 2;
 					}
 					tg.GiveBody(randompick(1, 1, 2));
 
 					// [Ace] Overdose if you try to overregenerate.
-					if (tg.Health >= 80)
+					if (tg.Health >= 85)
 					{
 						tg.stimcount++;
-						tg.fatigue += 2;
+						tg.fatigue += 3;
 					}
 				}
 				Accuracy--;
