@@ -91,7 +91,7 @@ class PortableSuperStimpack : PortableStimpack
 	Default
 	{
 		Inventory.PickupMessage "Picked up a super stimpack.";
-		Inventory.icon "SSTMA0";
+		Inventory.Icon "SSTMA0";
 		Tag "Super stimpack";
 		HDPickup.RefId "sst";
 		HDInjectorMaker.InjectorType "HDSuperStimpacker";
