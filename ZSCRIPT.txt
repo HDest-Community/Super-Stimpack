@@ -1,6 +1,6 @@
 version "4.0"
 
-class SuperStimHandler : StaticEventHandler
+class SuperStimHandler : EventHandler
 {
 	override void CheckReplacement(ReplaceEvent e)
 	{
