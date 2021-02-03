@@ -44,7 +44,7 @@ class PortableSuperStimpack : PortableStimpack
 		}
 
 		plr.A_StartSound("weapons/pocket", 20);
-		if (++TimesFumbled >= 10)
+		if (++TimesFumbled >= 7)
 		{
 			// [Ace] Actual stim.
 			plr.A_SetBlend("7a 3a 18", 0.1, 4);
