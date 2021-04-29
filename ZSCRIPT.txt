@@ -389,7 +389,7 @@ class InjectSuperStimDummy : InjectStimDummy
 					if (Accuracy > default.Accuracy - 40)
 					{
 						tg.stimcount++;
-						tg.fatigue += 2;
+						tg.fatigue += 1;
 					}
 					tg.GiveBody(randompick(1, 1, 2));
 
@@ -397,7 +397,7 @@ class InjectSuperStimDummy : InjectStimDummy
 					if (tg.Health >= 95)
 					{
 						tg.stimcount++;
-						tg.fatigue += 3;
+						tg.fatigue += 2;
 					}
 				}
 				Accuracy--;
