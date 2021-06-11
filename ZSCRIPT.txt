@@ -362,17 +362,17 @@ class InjectSuperStimDummy : InjectStimDummy
 		Spawn:
 			TNT1 A 6 nodelay
 			{
-				plr = HDPlayerPawn(target);
-				if (!plr || plr.bKILLED)
+				tg = HDPlayerPawn(target);
+				if (!tg || tg.bKILLED)
 				{
 					Destroy();
 					return;
 				}
 
-				plr.aggravateddamage += random(1, 2);
-				if (plr.zerk > 0)
+				tg.aggravateddamage += random(1, 2);
+				if (tg.zerk > 0)
 				{
-					plr.aggravateddamage + random(2, 4);
+					tg.aggravateddamage + random(2, 4);
 				}
 			}
 			TNT1 A 1
@@ -388,17 +388,17 @@ class InjectSuperStimDummy : InjectStimDummy
 					// [Ace] Standard dosage.
 					if (Accuracy > default.Accuracy - 40)
 					{
-						plr.stimcount++;
-						plr.fatigue += 1;
+						tg.stimcount++;
+						tg.fatigue += 1;
 					}
-					plr.GiveBody(randompick(1, 1, 2));
-					plr.incaptimer -= 15;
+					tg.GiveBody(randompick(1, 1, 2));
+					tg.incaptimer -= 15;
 
 					// [Ace] Overdose if you try to overregenerate.
-					if (plr.Health >= 95)
+					if (tg.Health >= 95)
 					{
-						plr.stimcount++;
-						plr.fatigue += 2;
+						tg.stimcount++;
+						tg.fatigue += 2;
 					}
 				}
 				Accuracy--;
