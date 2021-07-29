@@ -352,9 +352,11 @@ class HDSuperStimpacker : HDStimpacker
 
 class InjectSuperStimDummy : InjectStimDummy
 {
+	private SuperStimThinker SThinker; // [Ace] Ever heard of a shower?
+
 	Default
 	{
-		Accuracy 70;
+		Accuracy 40;
 	}
 
 	States
@@ -369,15 +371,21 @@ class InjectSuperStimDummy : InjectStimDummy
 					return;
 				}
 
-				tg.aggravateddamage += random(1, 2);
+				if (!SThinker)
+				{
+					SThinker = SuperStimThinker.Get();
+				}
+
+				int aggro = int(ceil(SThinker.Drugs[tg.PlayerNumber()] / 200.0));
+				tg.aggravateddamage += aggro;
 				if (tg.zerk > 0)
 				{
-					tg.aggravateddamage + random(2, 4);
+					tg.aggravateddamage += aggro * 2;
 				}
 			}
 			TNT1 A 1
 			{
-				if (!target || target.bKILLED || Accuracy < 1)
+				if (!tg || tg.bKILLED || Accuracy < 1)
 				{
 					Destroy();
 					return;
@@ -385,26 +393,79 @@ class InjectSuperStimDummy : InjectStimDummy
 
 				if (Accuracy % 2 == 0)
 				{
-					// [Ace] Standard dosage.
-					if (Accuracy > default.Accuracy - 40)
-					{
-						tg.stimcount++;
-						tg.fatigue += 1;
-					}
-					tg.GiveBody(randompick(1, 1, 2));
-					tg.incaptimer = max(0, tg.incaptimer - 15);
-
-					// [Ace] Overdose if you try to overregenerate.
-					if (tg.Health >= 95)
-					{
-						tg.stimcount++;
-						tg.fatigue += 2;
-					}
+					// [Ace] Standard dosage. Thanks, doc.
+					tg.stimcount++;
+					tg.fatigue++;
+					tg.bloodpressure++;
+					SThinker.Drugs[tg.PlayerNumber()] += 5;
 				}
 				Accuracy--;
 			}
 			Wait;
 	}
+}
+
+class SuperStimThinker : Thinker
+{
+	int Drugs[MAXPLAYERS];
+
+	override void Tick()
+	{
+		if (level.IsFrozen())
+		{
+			return;
+		}
+
+		for (int i = 0; i < MAXPLAYERS; ++i)
+		{
+			let plr = HDPlayerPawn(players[i].mo);
+			if (!plr || plr.bKILLED)
+			{
+				Drugs[i] = 0;
+				continue;
+			}
+
+			if (Drugs[i] > 0 && plr.beatcount == 0)
+			{
+				if (Drugs[i] > 100)
+				{
+					// [Ace] You might be able to save yourself if you have blues in your system.
+					plr.DamageMobj(plr, plr, 3, 'Internal', DMG_FORCED);
+					plr.fatigue += 2;
+					plr.bloodpressure += 2;
+					Drugs[i]--;
+				}
+				else
+				{
+					int amt = int(ceil(Drugs[i] / 25.0));
+					if (plr.regenblues > 0)
+					{
+						plr.regenblues--;
+						Drugs[i]--;
+						amt *= 2;
+					}
+					plr.GiveBody(amt, plr.MaxHealth());
+					plr.incaptimer = max(0, plr.incaptimer - int(ceil(Drugs[i] / 7.0)));
+				}
+				Drugs[i] = max(0, Drugs[i] - 1);
+			}
+			// Console.Printf("%i, %i, %i, %i", Drugs[i], plr.fatigue, plr.bloodpressure, plr.stunned);
+		}
+
+		Super.Tick();
+	}
+
+	static SuperStimThinker Get()
+	{
+		ThinkerIterator it = ThinkerIterator.Create('SuperStimThinker', STAT_DEFAULT);
+		SuperStimThinker t;
+		while ((t = SuperStimThinker(it.Next())))
+		{
+			return t;
+		}
+		return new('SuperStimThinker');
+	}
+
 }
 
 class SpentSuperStim : SpentZerk
