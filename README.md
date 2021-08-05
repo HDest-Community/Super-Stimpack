@@ -4,3 +4,4 @@
 - Super stims reduce the incap timer, allowing you to get up sooner.
 - Having blues doubles the effectiveness of the stim at the cost of some blues and the drugs being absorbed twice as fast.
 - All healing effects scale with how much of the drug you have left in your system.
+- When the effect runs out, you will suffer a short and mild comedown.

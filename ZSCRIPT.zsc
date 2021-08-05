@@ -445,11 +445,25 @@ class SuperStimThinker : Thinker
 						amt *= 2;
 					}
 					plr.beatmax = min(plr.beatmax, 14);
-					plr.bloodpressure = max(plr.bloodpressure, 40);
+					plr.bloodpressure = max(plr.bloodpressure, 30);
 					plr.GiveBody(amt, plr.MaxHealth());
 					plr.incaptimer = max(0, plr.incaptimer - int(ceil(Drugs[i] / 7.0)));
 				}
+
 				Drugs[i] = max(0, Drugs[i] - 1);
+				if (Drugs[i] == 0)
+				{
+					Drugs[i] = -15;
+					plr.A_SetBlend("20 0a 0f", 0.4, 25);
+					plr.A_StartSound(plr.painsound, CHAN_VOICE, volume: 0.5);
+				}
+			}
+			else if (Drugs[i] < 0 && plr.beatcount == 0)
+			{
+				plr.fatigue++;
+				plr.beatmax = min(plr.beatmax, 6);
+				plr.bloodpressure = max(plr.bloodpressure, 50);
+				Drugs[i]++;
 			}
 			// Console.Printf("%i, %i, %i, %i", Drugs[i], plr.fatigue, plr.bloodpressure, plr.stunned);
 		}
