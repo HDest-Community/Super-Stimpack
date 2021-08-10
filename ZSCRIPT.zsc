@@ -244,10 +244,10 @@ class HDSuperStimpacker : HDStimpacker
 				let plr = HDPlayerPawn(InjectorData.HitActor);
 				if (!plr)
 				{
-					let mon = HDMobMan(InjectorData.HitActor);
+					let mon = HDHumanoid(InjectorData.HitActor);
 					if (mon && invoker.GetClassName() == "HDSuperStimpacker")
 					{
-						if (mon.Stunned < 100 || mon.Health < 10)
+						if (mon.Stunned < 100 || mon.Health < 50)
 						{
 							if (HelpText)
 							{
@@ -258,7 +258,7 @@ class HDSuperStimpacker : HDStimpacker
 						A_TakeInjector(invoker.InventoryType);
 						mon.A_StartSound(mon.painsound, CHAN_VOICE);
 						mon.Stunned = max(0, mon.stunned >> 1);
-						mon.GiveBody(-30);
+						mon.GiveBody(-100);
 						if (!CheckInventory(invoker.InventoryType, 1))
 						{
 							return ResolveState("DeselectHold");
