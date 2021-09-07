@@ -240,7 +240,7 @@ class HDSuperStimpacker : HDStimpacker
 			{
 				bool HelpText = GetCVar("hd_helptext");
 				FLineTraceData InjectorData;
-				LineTrace(angle, 42, pitch, offsetz: height - 12, data: InjectorData);
+				LineTrace(angle, HDCONST_ONEMETRE, pitch, offsetz: height - 12, data: InjectorData);
 				let plr = HDPlayerPawn(InjectorData.HitActor);
 				if (!plr)
 				{
