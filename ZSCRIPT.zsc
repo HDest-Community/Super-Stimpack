@@ -440,7 +440,10 @@ class SuperStimThinker : Thinker
 					int amt = int(ceil(Drugs[i] / 25.0));
 					if (plr.regenblues > 0)
 					{
-						plr.regenblues--;
+						if (!random(0, 2))
+						{
+							plr.regenblues--;
+						}
 						Drugs[i]--;
 						amt *= 2;
 					}
