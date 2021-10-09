@@ -449,7 +449,7 @@ class SuperStimThinker : Thinker
 					}
 					plr.beatmax = min(plr.beatmax, 14);
 					plr.bloodpressure = max(plr.bloodpressure, 30);
-					plr.GiveBody(amt, plr.MaxHealth());
+					plr.GiveBody(amt);
 					plr.incaptimer = max(0, plr.incaptimer - int(ceil(Drugs[i] / 7.0)));
 				}
 
