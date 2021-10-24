@@ -352,11 +352,6 @@ class HDSuperStimpacker : HDStimpacker
 
 class InjectSuperStimDummy : InjectStimDummy
 {
-	Default
-	{
-		Accuracy 40;
-	}
-
 	States
 	{
 		Spawn:
@@ -384,17 +379,15 @@ class InjectSuperStimDummy : InjectStimDummy
 					return;
 				}
 
-				if (Accuracy % 2 == 0)
-				{
-					// [Ace] Standard dosage. Thanks, doc.
-					tg.stimcount++;
-					tg.fatigue++;
-					tg.bloodpressure++;
-					tg.A_GiveInventory('HDSuperStim', 5);
-				}
+				// [Ace] Standard dosage. Thanks, doc.
+				tg.A_GiveInventory('HDStim', HDStim.HDSTIM_DOSE);
+				tg.fatigue += 20;
+				tg.bloodpressure += 30;
+				tg.A_GiveInventory('HDSuperStim', 200);
+				
 				Accuracy--;
 			}
-			Wait;
+			Stop;
 	}
 }
 
@@ -404,17 +397,13 @@ class HDSuperStim : HDDrug
 	{
 		if (!Comedown)
 		{
-			if (Amount > 100)
+			if (Amount > 280)
 			{
 				// [Ace] You might be able to save yourself if you have blues in your system.
-				hdp.DamageMobj(hdp, hdp, 3, 'Internal', DMG_FORCED);
+				hdp.DamageMobj(hdp, hdp, 2, 'Internal', DMG_FORCED);
 				hdp.fatigue += 2;
 				hdp.bloodpressure += 2;
 				Amount--;
-				if (hdp.strength < 2.0)
-				{
-					hdp.strength += 0.05;
-				}
 			}
 			else
 			{
