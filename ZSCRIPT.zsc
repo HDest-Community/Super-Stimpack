@@ -352,8 +352,6 @@ class HDSuperStimpacker : HDStimpacker
 
 class InjectSuperStimDummy : InjectStimDummy
 {
-	private SuperStimThinker SThinker; // [Ace] Ever heard of a shower?
-
 	Default
 	{
 		Accuracy 40;
@@ -371,12 +369,7 @@ class InjectSuperStimDummy : InjectStimDummy
 					return;
 				}
 
-				if (!SThinker)
-				{
-					SThinker = SuperStimThinker.Get();
-				}
-
-				int aggro = int(ceil(SThinker.Drugs[tg.PlayerNumber()] / 200.0));
+				int aggro = int(ceil(tg.CountInv('HDSuperStim') / 200.0));
 				tg.aggravateddamage += aggro;
 				if (tg.zerk > 0)
 				{
@@ -397,7 +390,7 @@ class InjectSuperStimDummy : InjectStimDummy
 					tg.stimcount++;
 					tg.fatigue++;
 					tg.bloodpressure++;
-					SThinker.Drugs[tg.PlayerNumber()] += 5;
+					tg.A_GiveInventory('HDSuperStim', 5);
 				}
 				Accuracy--;
 			}
@@ -405,86 +398,61 @@ class InjectSuperStimDummy : InjectStimDummy
 	}
 }
 
-class SuperStimThinker : Thinker
+class HDSuperStim : HDDrug
 {
-	int Drugs[MAXPLAYERS];
-
-	override void Tick()
+	override void OnHeartbeat(HDPlayerPawn hdp)
 	{
-		if (level.IsFrozen())
+		if (!Comedown)
 		{
-			return;
-		}
-
-		for (int i = 0; i < MAXPLAYERS; ++i)
-		{
-			let plr = HDPlayerPawn(players[i].mo);
-			if (!plr || plr.bKILLED)
+			if (Amount > 100)
 			{
-				Drugs[i] = 0;
-				continue;
-			}
-
-			if (Drugs[i] > 0 && plr.beatcount == 0)
-			{
-				if (Drugs[i] > 100)
+				// [Ace] You might be able to save yourself if you have blues in your system.
+				hdp.DamageMobj(hdp, hdp, 3, 'Internal', DMG_FORCED);
+				hdp.fatigue += 2;
+				hdp.bloodpressure += 2;
+				Amount--;
+				if (hdp.strength < 2.0)
 				{
-					// [Ace] You might be able to save yourself if you have blues in your system.
-					plr.DamageMobj(plr, plr, 3, 'Internal', DMG_FORCED);
-					plr.fatigue += 2;
-					plr.bloodpressure += 2;
-					Drugs[i]--;
+					hdp.strength += 0.05;
 				}
-				else
+			}
+			else
+			{
+				int blues = hdp.CountInv('HDBlues');
+				int amt = int(ceil(Amount / 25.0));
+				if (blues > 0)
 				{
-					int amt = int(ceil(Drugs[i] / 25.0));
-					if (plr.regenblues > 0)
+					if (!random(0, 2))
 					{
-						if (!random(0, 2))
-						{
-							plr.regenblues--;
-						}
-						Drugs[i]--;
-						amt *= 2;
+						hdp.A_TakeInventory('HDBlues', 1);
 					}
-					plr.beatmax = min(plr.beatmax, 14);
-					plr.bloodpressure = max(plr.bloodpressure, 30);
-					plr.GiveBody(amt);
-					plr.incaptimer = max(0, plr.incaptimer - int(ceil(Drugs[i] / 7.0)));
+					amt *= 2;
 				}
-
-				Drugs[i] = max(0, Drugs[i] - 1);
-				if (Drugs[i] == 0)
-				{
-					Drugs[i] = -15;
-					plr.A_SetBlend("20 0a 0f", 0.4, 25);
-					plr.A_StartSound(plr.painsound, CHAN_VOICE, volume: 0.5);
-				}
+				hdp.beatmax = min(hdp.beatmax, 14);
+				hdp.bloodpressure = max(hdp.bloodpressure, 30);
+				hdp.GiveBody(amt);
+				hdp.incaptimer = max(0, hdp.incaptimer - int(ceil(Amount / 7.0)));
 			}
-			else if (Drugs[i] < 0 && plr.beatcount == 0)
+
+			Amount = max(0, Amount - 1);
+			if (Amount == 0)
 			{
-				plr.fatigue++;
-				plr.beatmax = min(plr.beatmax, 6);
-				plr.bloodpressure = max(plr.bloodpressure, 50);
-				Drugs[i]++;
+				Amount += 15;
+				hdp.A_SetBlend("20 0a 0f", 0.6, 20);
+				hdp.A_StartSound(hdp.painsound, CHAN_VOICE, volume: 0.5);
+				Comedown = true;
 			}
-			// Console.Printf("%i, %i, %i, %i", Drugs[i], plr.fatigue, plr.bloodpressure, plr.stunned);
 		}
-
-		Super.Tick();
-	}
-
-	static SuperStimThinker Get()
-	{
-		ThinkerIterator it = ThinkerIterator.Create('SuperStimThinker', STAT_DEFAULT);
-		SuperStimThinker t;
-		while ((t = SuperStimThinker(it.Next())))
+		else if (Amount > 0)
 		{
-			return t;
+			hdp.fatigue++;
+			hdp.beatmax = min(hdp.beatmax, 3);
+			hdp.bloodpressure = max(hdp.bloodpressure, 50);
+			Amount--;
 		}
-		return new('SuperStimThinker');
 	}
 
+	bool Comedown;
 }
 
 class SpentSuperStim : SpentZerk
