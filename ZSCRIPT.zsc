@@ -373,7 +373,7 @@ class InjectSuperStimDummy : InjectStimDummy
 			}
 			TNT1 A 1
 			{
-				if (!tg || tg.bKILLED || Accuracy < 1)
+				if (!tg || tg.bKILLED)
 				{
 					Destroy();
 					return;
