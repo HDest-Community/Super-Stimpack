@@ -411,7 +411,7 @@ class HDSuperStim : HDDrug
 				int amt = int(ceil(Amount / 25.0));
 				if (blues > 0)
 				{
-					if (!random(0, 2))
+					if (random(0, 3))
 					{
 						hdp.A_TakeInventory('HDBlues', 1);
 					}
