@@ -411,22 +411,22 @@ class HDSuperStim : HDDrug
 				int amt = int(ceil(Amount / 25.0));
 				if (blues > 0)
 				{
-					if (!random(0, 1))
+					if (!random(0, 4))
 					{
 						hdp.A_TakeInventory('HDBlues', 1);
+						amt *= 2;
 					}
-					amt *= 2;
 				}
 				hdp.beatmax = min(hdp.beatmax, 14);
 				hdp.bloodpressure = max(hdp.bloodpressure, 30);
 				hdp.GiveBody(amt);
-				hdp.incaptimer = max(0, hdp.incaptimer - int(ceil(Amount / 7.0)));
+				hdp.incaptimer = max(0, hdp.incaptimer - int(ceil(Amount / 10.0)));
 			}
 
 			Amount = max(0, Amount - 1);
 			if (Amount == 0)
 			{
-				Amount += 15;
+				Amount += 30;
 				hdp.A_SetBlend("20 0a 0f", 0.6, 20);
 				hdp.A_StartSound(hdp.painsound, CHAN_VOICE, volume: 0.5);
 				Comedown = true;
