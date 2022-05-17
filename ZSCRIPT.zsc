@@ -282,7 +282,7 @@ class HDSuperStimpacker : HDStimpacker
 				else if (plr.CheckInventory("IsMoving", 5))
 				{
 					bool PlrHelpText = plr.GetCVar("hd_helptext");
-					if (plr.stimcount > 0)
+					if (plr.CountInv('HDStim') > 0)
 					{
 						if (PlrHelpText)
 						{
@@ -306,7 +306,7 @@ class HDSuperStimpacker : HDStimpacker
 					}
 					return ResolveState("Nope");
 				}
-				else if ((teamplay || !deathmatch) && ((invoker.InjectType == "InjectSuperStimDummy" && plr.stimcount > 0) || (invoker.InjectType == "InjectZerkDummy" && plr.zerk > 0)))
+				else if ((teamplay || !deathmatch) && ((invoker.InjectType == "InjectSuperStimDummy" && plr.CountInv('HDStim') > 0) || (invoker.InjectType == "InjectZerkDummy" && HDZerk.IsZerk(plr))))
 				{
 					if (plr.GetCVar("hd_helptext"))
 					{
@@ -366,7 +366,7 @@ class InjectSuperStimDummy : InjectStimDummy
 
 				int aggro = int(ceil(tg.CountInv('HDSuperStim') / 200.0));
 				tg.aggravateddamage += aggro;
-				if (tg.zerk > 0)
+				if (HDZerk.IsZerk(tg))
 				{
 					tg.aggravateddamage += aggro * 2;
 				}
