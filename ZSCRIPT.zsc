@@ -77,6 +77,7 @@ class PortableSuperStimpack : PortableStimpack
 			else if (Mags.Size() > 0)
 			{
 				Mags.Pop();
+				
 			}
 
 			TimesFumbled = 0;
@@ -105,8 +106,21 @@ class PortableSuperStimpack : PortableStimpack
 	}
 }
 
-class HDSuperStimpacker : HDStimpacker
+class HDSuperStimpacker : HDWoundFixer
 {
+	class<actor> injecttype;
+	class<actor> spentinjecttype;
+	class<inventory> inventorytype;
+	class<inventory> injectortype;
+	string injectoricon;
+	property injectoricon:injectoricon;
+	property injecttype:injecttype;
+	property spentinjecttype:spentinjecttype;
+	property inventorytype:inventorytype;
+	property injectortype:injectortype;
+	string noerror;
+	property noerror:noerror;
+	
 	override Inventory CreateTossable(int amount)
 	{
 		HDWoundFixer.DropMeds(owner, 0);
@@ -116,14 +130,14 @@ class HDSuperStimpacker : HDStimpacker
 	override string GetHelpText() { return WEPHELP_INJECTOR; }
 	
 	Default
-	{
+	{	
 		Tag "Super stimpack";
-		HDStimpacker.InjectType "InjectSuperStimDummy";
-		HDStimpacker.SpentInjectType "SpentSuperStim";
-		HDStimpacker.InventoryType "PortableSuperStimpack";
-		HDStimpacker.NoError "No super stimpacks.";
-		HDWoundFixer.InjectorIcon "SSTMA0";
-		HDWoundFixer.InjectorType "PortableSuperStimpack";
+		HDSuperStimpacker.InjectType "InjectSuperStimDummy";
+		HDSuperStimpacker.SpentInjectType "SpentSuperStim";
+		HDSuperStimpacker.InventoryType "PortableSuperStimpack";
+		HDSuperStimpacker.NoError "No super stimpacks.";
+		HDSuperStimpacker.InjectorIcon "SSTMA0";
+		HDSuperStimpacker.InjectorType "PortableSuperStimpack";
 	}
 
 	States
@@ -407,13 +421,13 @@ class HDSuperStim : HDDrug
 			}
 			else
 			{
-				int blues = hdp.CountInv('HDBlues');
+				int blues = hdp.CountInv('HealingMagic');
 				int amt = int(ceil(Amount / 25.0));
 				if (blues > 0)
 				{
 					if (!random(0, 4))
 					{
-						hdp.A_TakeInventory('HDBlues', 1);
+						hdp.A_TakeInventory('HealingMagic', 1);
 						amt *= 2;
 					}
 				}
